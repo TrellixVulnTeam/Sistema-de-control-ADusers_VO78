@@ -1,0 +1,18 @@
+<%- include('../template/head') -%>
+<%- include('../template/navbar') -%>
+<div class='d-flex justify-content-center align-items-center pt-5'> 
+    <form action="/login" method="post">
+        <div class='pt-3'>
+            <label for='email'>Email:</label>
+            <input type='email' name='email' id='email'>
+        </div>
+        <div class='pt-3'>
+            <label for='username'>Clave:</label>
+            <input type='password' name='password' id='password'>
+        </div>
+        <div class='pt-3'>
+            <button type='submit' class='btn btn-primary'>Login</button>
+        </div>
+    </form>
+</div>
+<%- include('../template/footer') -%>

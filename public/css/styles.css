@@ -1,0 +1,51 @@
+*{
+    padding: 0;
+    margin: 0;
+
+}
+
+
+.container-form {
+    padding: 20px;
+}
+
+.img-logo{
+    background-image: url('../img/logo.png');
+    background-repeat: no-repeat;
+    justify-content: center;
+    height:120px;
+    width:400px;
+    
+}
+
+.img-logo a {
+    position: relative;
+    top: 105px
+}
+
+form .btn {
+    width:100%
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100vw;
+    border: 1px solid #141414;
+    background-color: #141414;
+    color: #fff;
+}
+
+.container-user {
+    width: 100vw;
+    height: 80vh;
+}
+
+.container-form-register{
+    width: 400px;
+}
+
+.containet-note {
+    width: 400px;
+    height:300px;
+}
