@@ -1,6 +1,5 @@
 //import the express module
 const express = require('express');
-const path = require('path');
 const Shell = require('node-powershell')
 const bodyParser = require('body-parser');
 const fs = require('fs');
@@ -8,6 +7,48 @@ const fs = require('fs');
 const os = require('os');
 const { exec } = require('child_process');
 const psswdValiidator = require('password-validator'); //validate password
+const path = require('path');
+const _ = require('lodash');
+const pathErrLog = path.resolve('./logs/errlog.txt');
+const historyAction = path.resolve('./logs/history.txt')
+const successActions = path.resolve('./logs/successActions.txt');
+const today = new Date();
+const psswd = today.toLocaleString('default', { month: 'long'}) + today.getFullYear();
+let status
+
+//function
+const verifyUser = async(user) => {
+    await exec(`get-aduser -filter 'name -like "${user}*"'`, {'shell': 'powershell.exe'}, (err, stdout, stderr) => {
+        if(stderr){
+            return console.log(stderr.message);
+        }else {
+            console.log(stdout)
+            let resultToUpper = _.toUpper(user);
+            const userExist = stdout.indexOf(`${resultToUpper}`);
+            if(userExist == -1){
+                fs.writeFile(historyAction, `${today} -El usuario a sido verificado ${user}, ${check}`);
+            }else{
+                fs.writeFile(pathErrLog,`${today} Error user ${user} ya se encuentra registrado`, (err) => {
+                    if(err){
+                        fs.writeFile('errlog.txt',`${today} Ocurrio un error a la hora de registrar el error ${user}`);
+                    }else{
+                        console.log(err)
+                    }
+                })   
+            }
+        }
+    });
+}
+
+const UnlockUser = async(user) => {
+    await exec(`Unlock-ADAccount -Identity ${user}`, {'shell': 'powershell.exe'});
+    await exec(`Set-AdAccount -Identity ${user} -Reset -Newpassword (convertTo-SecureString -AsPlainText "${psswd}" -Force)`, {'shell': 'powershell'}, (err, stdout, stderr) => {
+        if(err){
+            return console.log(stderr);
+        }
+        fs.writeFile('history.txt',`${today} el Usuario ${user}`)
+    })
+}
 
 //create a schema object
 let schema = new psswdValiidator();
@@ -48,16 +89,20 @@ app.get('/login', (req,res) => {
 });
 
 app.get('/des_user', (req, res) => {
-    return res.render('pages/unlock', { title: 'Desbloqueo de Cuenta' });
+    return res.render('pages/unlock', { title: 'Desbloqueo de Usuario' });
 });
 
-app.post('/des_user', (req, res) => {
-    const user = req.body.usernames;
-    if(user){
-        
-        return res.redirect('pages/unlock', {title:'Desbloquear Cuenta'});
+app.post('/des_user', async (req, res,next) => {
+    const user = req.body.username;
+    console.log(user)
+    try{
+        status = 'desbloqueo'
+        await verifyUser(user);
+        return res.redirect('/des_user');
+    }catch(err){
+        next(err);
+        return res.render('pages/unlock', {title: 'Desbloquear Usuario'})
     }
-    return res.render('pages/unlock', {title: 'Desbloquear Cuenta'});   
 });
 
 app.get('/re_user', (req, res) => {
@@ -66,5 +111,4 @@ app.get('/re_user', (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`${PORT}`);
-    // console.log(date);
 });
