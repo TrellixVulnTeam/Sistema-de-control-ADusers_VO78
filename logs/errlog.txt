@@ -1,1 +1,10 @@
-Mon Aug 02 2021 10:11:57 GMT-0700 (hora de verano del Pacífico) Error user A ya se encuentra registrado
+Wed Aug 11 2021 08:28:16 GMT-0700 (hora de verano del Pacífico) - Set-AdAccountPassword : Unable to find a default server with Active Directory 
+Web Services running.
+At line:1 char:1
++ Set-AdAccountPassword -Identity Z01005735 -Reset -Newpassword (conver ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ResourceUnavailable: (Z01005735:ADAccount) [Set 
+   -ADAccountPassword], ADServerDownException
+    + FullyQualifiedErrorId : ActiveDirectoryServer:1355,Microsoft.ActiveDire 
+   ctory.Management.Commands.SetADAccountPassword
+ 

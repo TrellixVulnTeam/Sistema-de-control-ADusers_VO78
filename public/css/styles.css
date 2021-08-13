@@ -15,7 +15,6 @@
     justify-content: center;
     height:120px;
     width:400px;
-    
 }
 
 .img-logo a {
@@ -42,7 +41,8 @@ footer {
 }
 
 .container-form-register{
-    width: 400px;
+    width: 600px;
+    
 }
 
 .containet-note {

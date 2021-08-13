@@ -1,40 +1,45 @@
 <%- include('../template/head') -%>
 <%- include('../template/navbar-login') -%>
 <div class="align-items-center justify-content-center d-flex flex-column container-user">
-    <form class="form-horizontal container-form-register" method="post" action="register">
+    <%if(statusadd) { %>
+        <div class="alert <%= alertColoradd %>" role="alert">
+            <h2><%= statusadd %></h2>
+        </div>
+    <% } %>
+    <form class="form-horizontal container-form-register" method="POST" action="/re_user">
         <div class="form-group d-flex justify-content-between" >
             <label for="employId">No. Empleado:</label>
-            <input for="employId" id="employId" placeholder="Numero de empleado" type="text">
+            <input for="employId" id="employId" name="employId" placeholder="Numero de empleado" type="text" required>
         </div>
         <div class="form-group pt-3 d-flex justify-content-between" >
             <label for="firstName">Nombre(s):</label>
-            <input for="firstName" id="firstName" placeholder="Nombre(s)" type="text">
+            <input for="firstName" id="firstName" name="firstName" placeholder="Nombre(s)" type="text" required>
         </div>
         <div class="form-group pt-3 d-flex justify-content-between" >
             <label for="lastName">Apellidos:</label>
-            <input for="lastName" id="lastName" placeholder="Apellido(s)" type="text">
+            <input for="lastName" id="lastName" name="lastName" placeholder="Apellido(s)" type="text" required>
         </div>
         <div class="form-group pt-3 d-flex justify-content-between" >
             <label for="password">Contraseña:</label>
-            <input for="password" id="lastName" placeholder="Contraseña" type="password">
+            <input for="password" id="password" name="password" placeholder="Contraseña" type="password">
         </div>
         <div class="form-group pt-3 d-flex justify-content-between" >
-            <label for="re-password">Validacion de Contraseña:</label>
-            <input for="re-password" id="re-password" placeholder="Validacion Contraseña" type="text">
+            <label for="rePassword">Validacion de Contraseña:</label>
+            <input for="rePassword" id="rePassword" name="rePassword" placeholder="Validacion Contraseña" type="password">
         </div>
         <div class="form-group pt-3 d-flex justify-content-between align-items-center" >
             <label class="" for="location">Localidad:</label>
-            <select class="form-select" id="location">
+            <select class="form-select" name="location" id="location" required>
               <option selected>Seleccion...</option>
-              <option value="1">Tijuana</option>
-              <option value="2">Ensenada</option>
-              <option value="3">Mexicali</option>
-              <option value="4">Chihuahua</option>
-              <option value="5">Cd.Juarez</option>
-              <option value="6">Los Cabos</option>
+              <option value="tijuana">Tijuana</option>
+              <option value="ensenada">Ensenada</option>
+              <option value="mexicali">Mexicali</option>
+              <option value="chihuahua">Chihuahua</option>
+              <option value="cd.juarez">Cd.Juarez</option>
+              <option value="los cabos">Los Cabos</option>
             </select>
         </div>
-        <button type="button" class="btn btn-primary mt-3">Enviar</button>
+        <button type="submit" class="btn btn-primary mt-3">Enviar</button>
     </form>
     <div class="light mt-5 container-form">
         <p id="letter" class="invalid">Nota: la Contraseña debe contener <b>Mayusculas</b>, <b>minusculas</b>, <b>Numeros</b>, y una longitud <b>de 8 a 16 caracteres</b> </p>
