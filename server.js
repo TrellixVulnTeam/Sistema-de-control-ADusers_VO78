@@ -23,6 +23,7 @@ const titleAdd = 'Añadir un usuario de Dominio';
 
 //function to unlock User
 const UnlockUser = (user, password) => {
+    user = user.toUpperCase();
     exec(`Unlock-ADAccount -Identity ${user}`, {'shell': 'powershell.exe'}, (err, stdout, stderr) => {
         if(err){
             fs.writeFile(pathErrLog, `${today} - El usuario: ${user} no se encontro en el directorio`, (err) =>{
@@ -45,13 +46,17 @@ const UnlockUser = (user, password) => {
         fs.writeFile(history, `${today} - El usuario: ${user}, se ha debloqueado y se actualizo la contraseña`, (err) =>{
             if(err){console.log(err.message)}
         });
-        console.log('desbloqueado ' + user)
         return status=`Usuario ${user} desbloqueado`, alertColor = 'alert-success';
     });
 }
 
 //Function to ADuser
 const addUser = (user) => {
+    user.firstName = user.lastName.toUpperCase();
+    user.lastName = user.lastName.toUpperCase();
+    user.employId = user.employId.toUpperCase();
+    user.location = user.location.toUpperCase();
+
     const fullName = (user.firstName + ' '+ user.lastName);
     exec(`New-ADUser -Name "${fullName}" -Enable $True -GivenName "${user.firstName}" -SamAccountName "${user.employId}" -Surname "${user.lastName}" -UserPrincipalName "${user.employId}@ZGNE.NET" -LogonWorkstations "${user.employId}" -AccountPassword $(ConvertTo-SecureString '${user.password}' -AsPlainText -Force) -PasswordNeverExpires $true`, {'shell': 'powershell.exe'}, (err, stdout, stderr) => {
         if(err){
@@ -75,7 +80,7 @@ schema
     .has().uppercase()
     .has().lowercase()
     .has().not().spaces()
-    .is().not().oneOf(['Password123!','Password','P4ssw0rd']);
+    .is().not().oneOf(['Password123!','Password','P4ssw0rd', 'admin','admin123', '12345678']);
 
 
 
@@ -132,11 +137,9 @@ app.post('/des_user', async(req, res, next) => {
                         resolve(res.redirect('/des_user'));
                     },1500);
                 })
-                
-                
             } 
         }
-        status = 'La contraseña no coinciden';
+        status = 'La contraseña no coincide';
         alertColor = 'alert-warning';
         return res.redirect('/des_user');
     }catch(err) {
@@ -179,7 +182,7 @@ app.post('/re_user', async (req, res) => {
                 });
             } 
         }
-        statusAdd = 'Las contraseña no coinciden';
+        statusAdd = 'Las contraseña no coincide';
         alertColorAdd = 'alert-warning';
         return res.redirect('/re_user');
     }catch(err){

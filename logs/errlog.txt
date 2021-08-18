@@ -1,7 +1,8 @@
-Tue Aug 17 2021 19:16:54 GMT-0700 (hora de verano del Pacífico) - New-ADUser : The specified account already exists
+Wed Aug 18 2021 13:05:01 GMT-0700 (hora de verano del Pacífico) - New-ADUser : An attempt was made to add an object to the directory with a name that is already in use
 At line:1 char:1
-+ New-ADUser -Name "jovanny prueba" -Enable $True -GivenName "jovanny"  ...
++ New-ADUser -Name "PRUEBA PRUEBA" -Enable $True -GivenName "PRUEBA" -S ...
 + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : ResourceExists: (CN=jovanny prue...,DC=ZGNE,DC=NET:String) [New-ADUser], ADIdentityAlreadyExistsException
-    + FullyQualifiedErrorId : ActiveDirectoryServer:1316,Microsoft.ActiveDirectory.Management.Commands.NewADUser
+    + CategoryInfo          : NotSpecified: (CN=PRUEBA PRUEBA,CN=Users,DC=ZGNE,DC=NET:String) [New-ADUser], ADExceptio 
+   n
+    + FullyQualifiedErrorId : ActiveDirectoryServer:8305,Microsoft.ActiveDirectory.Management.Commands.NewADUser
  

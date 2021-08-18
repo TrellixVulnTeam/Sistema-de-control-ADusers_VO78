@@ -6,35 +6,30 @@
             <h2><%= statusAdd %></h2>
         </div>
     <% } %>
-    <form class="form-horizontal container-form-register" method="POST" action="/re_user">
-        <div class="form-group d-flex justify-content-between" >
-            <label for="employid">No. Empleado:</label>
-            <input for="employid" id="employid" name="employid" placeholder="Numero de empleado" type="text" required>
+    <form class="form-horizontal container-form-register col-4" method="POST" action="/re_user">
+        <div class="form-group pt-3" >
+            <input class="form-control" for="employid" id="employid" name="employid" placeholder="Numero de empleado" type="text" required>
         </div>
-        <div class="form-group pt-3 d-flex justify-content-between" >
-            <label for="firstName">Nombre(s):</label>
-            <input for="firstName" id="firstName" name="firstName" placeholder="Nombre(s)" type="text" required>
+        <div class="form-group pt-3 " >
+            <input class="form-control" for="firstName" id="firstName" name="firstName" placeholder="Nombre(s)" type="text" required>
         </div>
-        <div class="form-group pt-3 d-flex justify-content-between" >
-            <label for="lastName">Apellidos:</label>
-            <input for="lastName" id="lastName" name="lastName" placeholder="Apellido(s)" type="text" required>
+        <div class="form-group pt-3 " >
+            <input class="form-control" for="lastName" id="lastName" name="lastName" placeholder="Apellido(s)" type="text" required>
         </div>
-        <div class="form-group pt-3 d-flex justify-content-between" >
-            <label for="password">Contraseña:</label>
-            <input for="password" id="password" name="password" placeholder="Contraseña" type="password">
+        <div class="form-group pt-3 " >
+            <input class="form-control" for="password" id="password" name="password" placeholder="Contraseña" type="password">
         </div>
-        <div class="form-group pt-3 d-flex justify-content-between" >
-            <label for="rePassword">Validacion de Contraseña:</label>
-            <input for="rePassword" id="rePassword" name="rePassword" placeholder="Confirmar Contraseña" type="password">
+        <div class="form-group pt-3" >
+            <input class="form-control" for="rePassword" id="rePassword" name="rePassword" placeholder="Confirmar Contraseña" type="password">
         </div>
-        <div class="form-group pt-3 d-flex justify-content-between align-items-center" >
-            <label class="" for="location">Localidad:</label>
+        <div class="form-group pt-3" >
             <select class="form-select ml-2" name="location" id="location" required>
               <option selected>Selecione Locacion...</option>
-              <option value="tijuana">Tijuana</option>
-              <option value="ensenada">Ensenada</option>
-              <option value="mexicali">Mexicali</option>
-              <option value="chihuahua">Chihuahua</option>
+              <option value="TIJ_CGT">Tijuana</option>
+              <option value="ENS_CGT">Ensenada</option>
+              <option value="MXLI_GBP">Mexicali GBP</option>
+              <option value="MXLI_GBP">Mexicali GNZ</option>
+              <option value="CHIHUAHUA_TCG">Chihuahua</option>
               <option value="cd.juarez">Cd.Juarez</option>
               <option value="los cabos">Los Cabos</option>
             </select>

@@ -1,40 +1,29 @@
 *{
     padding: 0;
     margin: 0;
-
+    font-family: 'Roboto', sans-serif;
 }
-
+@import url('https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900');
 .container-form {
     padding: 20px;
 }
 
 .img-logo{
     background-image: url('../img/logo.png');
-    background-repeat: no-repeat;
-    justify-content: center;
-    position: relative;
-    height:120px;
-    width:400px;
-    top: 15px;
+    background-size:cover;
+    width: 210px;
 }
 
 .img-logo a {
     position: relative;
-    top: 105px
+    top: 90px
 }
 
 form .btn {
     width:100%
 }
 
-footer {
-    position: fixed;
-    bottom: 0;
-    width: 100vw;
-    border: 1px solid #141414;
-    background-color: #141414;
-    color: #fff;
-}
+
 
 .container-user {
     width: 100vw;
@@ -77,6 +66,34 @@ footer {
 }
 
 .container-list a:hover { 
-    background-color: #cfcfcf;
-    border-radius: 100px;
+    color:#14497b;
 }
+
+.lineas {
+    position: relative;
+    width: 40%;
+    margin-left: 60%;
+    height: 12px;
+    background-color: #000;
+    background-color: #007B3E;
+}
+
+.lineaazul {
+    position: relative;
+    margin-bottom: 10px;
+    background-color: #14497b;
+}
+
+.form-control {
+    background-color: #f3f3f3 !important;
+}
+
+.form-select {
+    background-color: #f3f3f3 !important;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100vw;
+} 
