@@ -4,62 +4,64 @@ const Shell = require('node-powershell')
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const os = require('os');
-const { exec } = require('child_process');
+const { exec, execSync } = require('child_process');
 const psswdValiidator = require('password-validator'); //validate password
 const path = require('path');
 const _ = require('lodash');
 const pathErrLog = path.resolve('./logs/errlog.txt');
-const history = path.resolve('./logs/history.txt')
+const history = path.resolve('./logs/history.txt');
 const successActions = path.resolve('./logs/successActions.txt');
 const today = new Date();
 const psswd = today.toLocaleString('default', { month: 'long'}) + today.getFullYear();
 const passwd = psswd.charAt(0).toUpperCase()+ psswd.slice(1);
 let status;
-let statusadd;
-let alertColor = 'alert-success';
-let alertColoradd = 'alert-success';
+let statusAdd;
+let alertColor;
+let alertColorAdd ;
 const titleUnlock = 'Desbloquear Usuario';
+const titleAdd = 'Añadir un usuario de Dominio';
 
-
-//function
-const UnlockUser = async(user, password) => {
-    await exec(`Unlock-ADAccount -Identity ${user}`, {'shell': 'powershell.exe'}, (err, stdout, stderr) => {
+//function to unlock User
+const UnlockUser = (user, password) => {
+    exec(`Unlock-ADAccount -Identity ${user}`, {'shell': 'powershell.exe'}, (err, stdout, stderr) => {
         if(err){
             fs.writeFile(pathErrLog, `${today} - El usuario: ${user} no se encontro en el directorio`, (err) =>{
                 if(err){console.log(err.message)}
             })
-            return status='Usuario no encontrado', alertColor='alert-danger';
+            return status=`Usuario ${user} no encontrado`, alertColor='alert-danger';
         }else{
             if(stderr.indexOf('Cannot find an object with identity')===-1){
                 fs.writeFile(successActions, `${today} - Se ah desbloqueado el usuario ${user}`, (err) => {if(err){console.log(err.message)}});
             }
         }
     });
-    await exec(`Set-AdAccountPassword -Identity ${user} -Reset -Newpassword (convertTo-SecureString -AsPlainText "${password}" -Force)`, {'shell': 'powershell'}, (err, stdout, stderr) => {
+    exec(`Set-AdAccountPassword -Identity ${user} -Reset -Newpassword (convertTo-SecureString -AsPlainText "${password}" -Force)`, {'shell': 'powershell'}, (err, stdout, stderr) => {
         if(err){
             fs.writeFile(pathErrLog, `${today} - ${stderr}`, (err) => {
                 if(err){console.log(err.message)}
-            })
-            return status='Usuario no encontrado', alertColor='alert-danger';
+            });
+            return status=`Usuario ${user} no existe, intentelo de nuevo`, alertColor='alert-danger';
         }
-        return status='Usuario desbloqueado', alertColor = 'alert-success';
-    })
+        fs.writeFile(history, `${today} - El usuario: ${user}, se ha debloqueado y se actualizo la contraseña`, (err) =>{
+            if(err){console.log(err.message)}
+        });
+        console.log('desbloqueado ' + user)
+        return status=`Usuario ${user} desbloqueado`, alertColor = 'alert-success';
+    });
 }
 
-
-const addUser = async(user) => {
-    console.log(user)
+//Function to ADuser
+const addUser = (user) => {
     const fullName = (user.firstName + ' '+ user.lastName);
-    console.log(user.employId)
-    console.log(fullName);
-    await exec(`New-ADUser -Name ${fullName} -Enable True -GivenName ${user.firstName} -SamAccountName ${user.employId} -Surname ${user.lastName} -UserPrincipalName ${user.employId}@ZGNE.NET -LogonWorkstations ${employId} -AccountPassword $(ConvertTo-SecureString '${user.password}' -AsPlainText -Force) -PasswordNeverExpires $true`, {'shell': 'powershell.exe'}, (err, stdout, stderr) => {
+    exec(`New-ADUser -Name "${fullName}" -Enable $True -GivenName "${user.firstName}" -SamAccountName "${user.employId}" -Surname "${user.lastName}" -UserPrincipalName "${user.employId}@ZGNE.NET" -LogonWorkstations "${user.employId}" -AccountPassword $(ConvertTo-SecureString '${user.password}' -AsPlainText -Force) -PasswordNeverExpires $true`, {'shell': 'powershell.exe'}, (err, stdout, stderr) => {
         if(err){
             console.log(stderr);
             fs.writeFile(pathErrLog, `${today} - ${stderr}`, (err) => {if(err){console.log(err.message)}});
-            return statusadd = 'Error al Registar el Usuario', alertColor = 'alert-danger';
+            return statusAdd = `Error en registro de usuario: ${fullName}, verifique los datos`, alertColorAdd = 'alert-danger';
         }else{
-            fs.writeFile(successActions, `${today} - El usuario ${employId} ah sido de alta`, (err)=>{if(err){console.log(err.message)}});
-            return statusadd = 'Usuario Registrado', alertColor = 'alert-success'
+            console.log(stdout);
+            fs.writeFile(successActions, `${today} - El usuario ${user.employId} ah sido de alta`, (err)=>{if(err){console.log(err.message)}});
+            return statusAdd = `Usuario ${fullName} Registrado`, alertColorAdd = 'alert-success'
         }
     })
 }
@@ -94,73 +96,94 @@ const ps = new Shell({
 })
 
 app.get('/', (req, res) => {
-    return res.render('pages/login', {title:'Iniciar Sesion'})
-});
-
-app.get('/login', (req,res) => {
-    return res.render('pages/login', {title:'Iniciar Sesion'})
+    return res.render('pages/unlock', {title:titleUnlock, status, alertColor})
 });
 
 app.get('/des_user', (req, res) => {
     return res.render('pages/unlock', { title:titleUnlock, status,alertColor });
 });
 
-app.post('/des_user', async (req, res,next) => {
+app.post('/des_user', async(req, res, next) => {
+    status = '';
+    alertColor = '';
     const user = req.body.username;
     const password = req.body.password;
     const rePassword = req.body.rePassword;
-    
-    if(password === rePassword || (password === '' && rePassword === '')) {
-        if(password !== '') {
-            const pass = schema.validate(password);
-            if(pass){
-                await UnlockUser(user, password);
-                return res.redirect('/des_user');
+    try{
+        if(password === rePassword || (password === '' && rePassword === '')) {
+            if(password !== '') {
+                const pass = schema.validate(password);
+                if(pass){
+                    await UnlockUser(user, password);
+                    return new Promise((resolve, reject) => {
+                        setTimeout(() => {
+                            resolve(res.redirect('/des_user'));
+                        },1500);
+                    })
+                }else{
+                    status = 'Contraseña no cumple con los requisitos';
+                    alertColor = 'alert-danger';
+                    return res.redirect('/des_user');
+                }
             }else{
-                status = 'Contraseña no cumple con los requisitos';
-                alertColor = 'alert-danger';
-                return res.redirect('/des_user');
-            }
-        }else{
-            await UnlockUser(user, passwd);
-            return res.redirect('/des_user')
-        } 
+                await UnlockUser(user, passwd);
+                return new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        resolve(res.redirect('/des_user'));
+                    },1500);
+                })
+                
+                
+            } 
+        }
+        status = 'La contraseña no coinciden';
+        alertColor = 'alert-warning';
+        return res.redirect('/des_user');
+    }catch(err) {
+        next(err);
     }
-    status = 'La contraseña no coinciden';
-    alertColor = 'alert-warning';
-    return res.redirect('/des_user');
-    
 });
 
 app.get('/re_user', (req, res) => {
-    return res.render('pages/register' , {title: 'Registro de Usuario', statusadd,alertColoradd });
+    return res.render('pages/register' , {title: 'Registro de Usuario', statusAdd , alertColorAdd });
 });
 
 app.post('/re_user', async (req, res) => {
+    statusAdd='';
+    alertColorAdd='';
     try{
-        let user = {employId: req.body.employId, firstName: req.body.firstName, lastName: req.body.lastName, password: req.body.password, rePassword: req.body.rePassword, location: req.body.location}
+        let user = {employId: req.body.employid, firstName: req.body.firstName, lastName: req.body.lastName, password: req.body.password, rePassword: req.body.rePassword, location: req.body.location}
         if(user.password === user.rePassword || (user.password === '' && user.rePassword === '')) {
             if(user.password !== '') {
                 const pass = schema.validate(user.password);
                 if(pass){
                     await addUser(user);
-                    return res.redirect('/re_user');
+                    return new Promise((resolve, reject) =>{
+                        setTimeout(() => {
+                            resolve(res.redirect('/re_user'));
+                        },1500)
+                    })
                 }else{
-                    statusadd = 'Contraseña no cumple con los requisitos';
-                    alertColoradd= 'alert-danger';
+                    statusAdd = 'Contraseña no cumple con los requisitos';
+                    alertColorAdd= 'alert-danger';
                     return res.redirect('/re_user');
                 }
             }else{
                 user.password = passwd;
+                user.rePassword = passwd;  
                 await addUser(user);
-                return res.redirect('/re_user')
+                return new Promise((resolve, reject) =>{
+                    setTimeout(() => {
+                        resolve(res.redirect('/re_user'));
+                    },1500);
+                });
             } 
         }
-        statusadd = 'Las contraseña no coinciden';
-        alertColoradd = 'alert-warning';
+        statusAdd = 'Las contraseña no coinciden';
+        alertColorAdd = 'alert-warning';
         return res.redirect('/re_user');
     }catch(err){
-        console.log(err)
+        console.log(err);
     }
 })
 
@@ -168,5 +191,3 @@ app.listen(PORT, () => {
     console.log(`${PORT}`);
 });
 
-//Nota me quede en la alta de los usuarios en el servidor de dominio, tengo el problema de que el employid no esta definido por un valor
-//queda pendiente el resgistro de usuarios y mejorar una funcion para validad las contraseñas por medio de una funcion

@@ -1,15 +1,15 @@
 <%- include('../template/head') -%>
-<%- include('../template/navbar-login') -%>
+<%- include('../template/navbar') -%>
 <div class="align-items-center justify-content-center d-flex flex-column container-user">
-    <%if(statusadd) { %>
-        <div class="alert <%= alertColoradd %>" role="alert">
-            <h2><%= statusadd %></h2>
+    <%if(statusAdd) { %>
+        <div class="alert <%= alertColorAdd %>" role="alert">
+            <h2><%= statusAdd %></h2>
         </div>
     <% } %>
     <form class="form-horizontal container-form-register" method="POST" action="/re_user">
         <div class="form-group d-flex justify-content-between" >
-            <label for="employId">No. Empleado:</label>
-            <input for="employId" id="employId" name="employId" placeholder="Numero de empleado" type="text" required>
+            <label for="employid">No. Empleado:</label>
+            <input for="employid" id="employid" name="employid" placeholder="Numero de empleado" type="text" required>
         </div>
         <div class="form-group pt-3 d-flex justify-content-between" >
             <label for="firstName">Nombre(s):</label>
@@ -25,12 +25,12 @@
         </div>
         <div class="form-group pt-3 d-flex justify-content-between" >
             <label for="rePassword">Validacion de Contraseña:</label>
-            <input for="rePassword" id="rePassword" name="rePassword" placeholder="Validacion Contraseña" type="password">
+            <input for="rePassword" id="rePassword" name="rePassword" placeholder="Confirmar Contraseña" type="password">
         </div>
         <div class="form-group pt-3 d-flex justify-content-between align-items-center" >
             <label class="" for="location">Localidad:</label>
-            <select class="form-select" name="location" id="location" required>
-              <option selected>Seleccion...</option>
+            <select class="form-select ml-2" name="location" id="location" required>
+              <option selected>Selecione Locacion...</option>
               <option value="tijuana">Tijuana</option>
               <option value="ensenada">Ensenada</option>
               <option value="mexicali">Mexicali</option>

@@ -1,10 +1,7 @@
-Wed Aug 11 2021 08:28:16 GMT-0700 (hora de verano del Pacífico) - Set-AdAccountPassword : Unable to find a default server with Active Directory 
-Web Services running.
+Tue Aug 17 2021 19:16:54 GMT-0700 (hora de verano del Pacífico) - New-ADUser : The specified account already exists
 At line:1 char:1
-+ Set-AdAccountPassword -Identity Z01005735 -Reset -Newpassword (conver ...
++ New-ADUser -Name "jovanny prueba" -Enable $True -GivenName "jovanny"  ...
 + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : ResourceUnavailable: (Z01005735:ADAccount) [Set 
-   -ADAccountPassword], ADServerDownException
-    + FullyQualifiedErrorId : ActiveDirectoryServer:1355,Microsoft.ActiveDire 
-   ctory.Management.Commands.SetADAccountPassword
+    + CategoryInfo          : ResourceExists: (CN=jovanny prue...,DC=ZGNE,DC=NET:String) [New-ADUser], ADIdentityAlreadyExistsException
+    + FullyQualifiedErrorId : ActiveDirectoryServer:1316,Microsoft.ActiveDirectory.Management.Commands.NewADUser
  

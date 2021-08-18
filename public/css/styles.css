@@ -4,7 +4,6 @@
 
 }
 
-
 .container-form {
     padding: 20px;
 }
@@ -13,8 +12,10 @@
     background-image: url('../img/logo.png');
     background-repeat: no-repeat;
     justify-content: center;
+    position: relative;
     height:120px;
     width:400px;
+    top: 15px;
 }
 
 .img-logo a {
@@ -48,4 +49,34 @@ footer {
 .containet-note {
     width: 400px;
     height:300px;
+}
+
+.navbar-container {
+    display:flex;
+    flex-direction: row;
+    color: #141414;
+    align-items: center;
+
+}
+
+.navbar-container a {
+    text-decoration: none;
+    color: #141414;
+}
+
+.container-list li {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    list-style: none;
+}
+.container-list a {
+    padding: 30px;
+    border-radius: 100px;
+}
+
+.container-list a:hover { 
+    background-color: #cfcfcf;
+    border-radius: 100px;
 }
