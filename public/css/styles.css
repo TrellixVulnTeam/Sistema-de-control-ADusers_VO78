@@ -1,11 +1,18 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900');
+
 *{
     padding: 0;
     margin: 0;
     font-family: 'Roboto', sans-serif;
 }
-@import url('https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900');
+
 .container-form {
     padding: 20px;
+}
+
+.login-container { 
+    width: 100vw;
+    height: 80vh;
 }
 
 .img-logo{

@@ -99,16 +99,23 @@ const ps = new Shell({
     excutionPolicy: 'Bypass',
     noProfile: true,
 })
-
 app.get('/', (req, res) => {
-    return res.render('pages/unlock', {title:titleUnlock, status, alertColor})
+    return res.render('pages/login', {title:'Iniciar sesion', status, alertColor});
 });
+
+app.get('/login', (req, res) => {
+    return res.render('pages/login', {title:'Iniciar sesion', status, alertColor});
+});
+
+app.post('/login', (req, res) => {
+    return res.render('pages/login', {title})
+})
 
 app.get('/des_user', (req, res) => {
     return res.render('pages/unlock', { title:titleUnlock, status,alertColor });
 });
 
-app.post('/des_user', async(req, res, next) => {
+app.post('/des_user', (req, res, next) => {
     status = '';
     alertColor = '';
     const user = req.body.username;
@@ -119,11 +126,11 @@ app.post('/des_user', async(req, res, next) => {
             if(password !== '') {
                 const pass = schema.validate(password);
                 if(pass){
-                    await UnlockUser(user, password);
+                    UnlockUser(user, password);
                     return new Promise((resolve, reject) => {
                         setTimeout(() => {
                             resolve(res.redirect('/des_user'));
-                        },1500);
+                        },5000);
                     })
                 }else{
                     status = 'Contraseña no cumple con los requisitos';
@@ -131,11 +138,11 @@ app.post('/des_user', async(req, res, next) => {
                     return res.redirect('/des_user');
                 }
             }else{
-                await UnlockUser(user, passwd);
+                UnlockUser(user, passwd);
                 return new Promise((resolve, reject) => {
                     setTimeout(() => {
                         resolve(res.redirect('/des_user'));
-                    },1500);
+                    },5000);
                 })
             } 
         }
@@ -164,7 +171,7 @@ app.post('/re_user', async (req, res) => {
                     return new Promise((resolve, reject) =>{
                         setTimeout(() => {
                             resolve(res.redirect('/re_user'));
-                        },1500)
+                        },5000)
                     })
                 }else{
                     statusAdd = 'Contraseña no cumple con los requisitos';
@@ -178,7 +185,8 @@ app.post('/re_user', async (req, res) => {
                 return new Promise((resolve, reject) =>{
                     setTimeout(() => {
                         resolve(res.redirect('/re_user'));
-                    },1500);
+                    },5000);
+                    
                 });
             } 
         }

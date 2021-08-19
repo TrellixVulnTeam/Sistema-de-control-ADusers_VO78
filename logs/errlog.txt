@@ -1,8 +1,8 @@
-Wed Aug 18 2021 13:05:01 GMT-0700 (hora de verano del Pacífico) - New-ADUser : An attempt was made to add an object to the directory with a name that is already in use
+Wed Aug 18 2021 16:36:41 GMT-0700 (hora de verano del Pacífico) - Set-AdAccountPassword : Cannot find an object with identity: 'TEST1' under: 'DC=ZGNE,DC=NET'.
 At line:1 char:1
-+ New-ADUser -Name "PRUEBA PRUEBA" -Enable $True -GivenName "PRUEBA" -S ...
++ Set-AdAccountPassword -Identity TEST1 -Reset -Newpassword (convertTo- ...
 + ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (CN=PRUEBA PRUEBA,CN=Users,DC=ZGNE,DC=NET:String) [New-ADUser], ADExceptio 
-   n
-    + FullyQualifiedErrorId : ActiveDirectoryServer:8305,Microsoft.ActiveDirectory.Management.Commands.NewADUser
+    + CategoryInfo          : ObjectNotFound: (TEST1:ADAccount) [Set-ADAccountPassword], ADIdentityNotFoundException
+    + FullyQualifiedErrorId : ActiveDirectoryCmdlet:Microsoft.ActiveDirectory.Management.ADIdentityNotFoundException,Microso 
+   ft.ActiveDirectory.Management.Commands.SetADAccountPassword
  
