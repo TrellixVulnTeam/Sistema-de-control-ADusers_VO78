@@ -1,8 +1,1 @@
-Wed Aug 18 2021 16:36:41 GMT-0700 (hora de verano del Pacífico) - Set-AdAccountPassword : Cannot find an object with identity: 'TEST1' under: 'DC=ZGNE,DC=NET'.
-At line:1 char:1
-+ Set-AdAccountPassword -Identity TEST1 -Reset -Newpassword (convertTo- ...
-+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : ObjectNotFound: (TEST1:ADAccount) [Set-ADAccountPassword], ADIdentityNotFoundException
-    + FullyQualifiedErrorId : ActiveDirectoryCmdlet:Microsoft.ActiveDirectory.Management.ADIdentityNotFoundException,Microso 
-   ft.ActiveDirectory.Management.Commands.SetADAccountPassword
- 
+Fri Aug 20 2021 11:11:37 GMT-0700 (hora de verano del Pacífico) - El usuario: Z0101278 no se encontro en el directorio

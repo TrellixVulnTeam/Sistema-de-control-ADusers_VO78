@@ -23,7 +23,7 @@ const titleAdd = 'Añadir un usuario de Dominio';
 
 //function to unlock User
 const UnlockUser = (user, password) => {
-    user = user.toUpperCase();
+    
     exec(`Unlock-ADAccount -Identity ${user}`, {'shell': 'powershell.exe'}, (err, stdout, stderr) => {
         if(err){
             fs.writeFile(pathErrLog, `${today} - El usuario: ${user} no se encontro en el directorio`, (err) =>{
@@ -118,10 +118,16 @@ app.get('/des_user', (req, res) => {
 app.post('/des_user', (req, res, next) => {
     status = '';
     alertColor = '';
-    const user = req.body.username;
+    let user = req.body.username;
     const password = req.body.password;
     const rePassword = req.body.rePassword;
+    user = user.toUpperCase();
     try{
+        if(user === 'ADMIN'){
+            status = 'Usuario No permitido';
+            alertColor = 'alert-danger';
+            return res.redirect('/des_user');
+        }
         if(password === rePassword || (password === '' && rePassword === '')) {
             if(password !== '') {
                 const pass = schema.validate(password);
@@ -130,7 +136,7 @@ app.post('/des_user', (req, res, next) => {
                     return new Promise((resolve, reject) => {
                         setTimeout(() => {
                             resolve(res.redirect('/des_user'));
-                        },5000);
+                        },3000);
                     })
                 }else{
                     status = 'Contraseña no cumple con los requisitos';
@@ -142,7 +148,7 @@ app.post('/des_user', (req, res, next) => {
                 return new Promise((resolve, reject) => {
                     setTimeout(() => {
                         resolve(res.redirect('/des_user'));
-                    },5000);
+                    },3000);
                 })
             } 
         }
@@ -171,7 +177,7 @@ app.post('/re_user', async (req, res) => {
                     return new Promise((resolve, reject) =>{
                         setTimeout(() => {
                             resolve(res.redirect('/re_user'));
-                        },5000)
+                        },3000)
                     })
                 }else{
                     statusAdd = 'Contraseña no cumple con los requisitos';
@@ -185,7 +191,7 @@ app.post('/re_user', async (req, res) => {
                 return new Promise((resolve, reject) =>{
                     setTimeout(() => {
                         resolve(res.redirect('/re_user'));
-                    },5000);
+                    },3000);
                     
                 });
             } 
