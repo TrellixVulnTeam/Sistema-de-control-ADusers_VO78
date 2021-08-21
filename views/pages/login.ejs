@@ -1,9 +1,9 @@
 <%- include('../template/head') -%>
 <%- include('../template/navbar') -%>
     <div class="login-container align-items-center justify-content-center d-flex flex-column mb-1">
-        <form class="form-horizontal container-form-register col-2" method="POST" action="/login">
+        <form class="form-horizontal container-form-register col-3" method="POST" action="/login">
             <div class="form-group pt-3">
-                <input class="form-control" type="text" name="userName" placeholder="Usuario" id="userName" required>
+                <input class="form-control" type="email" name="email" placeholder="Correo Electronico" id="email" required>
             </div>
             <div class="form-group pt-3">
                 <input class="form-control" type="password" name="password" placeholder="contraseña" id="password" required>
