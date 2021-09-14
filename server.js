@@ -32,6 +32,7 @@ const titleSearch = 'Buscar Usuario';
 
 const PORT = 8000;
 const app = express();
+const {users} = require('./models')
 
 
 //control de mensajes al usuario
@@ -135,14 +136,15 @@ app.get('/', (req, res) => {
 app.get('/login', (req, res) => {
     return res.render('pages/login', { title: 'Iniciar sesion', status, alertColor });
 });
-// app.post("/login", passportLocalStrategy, (error, req, res, next) => {
-//     if (error) return console.log(error.message);
-// });
 
-app.post('/login', passport.authenticate('local', { failureRedirect: '/login' }),
-    function(req, res) {
-        res.redirect('/des_user');
-    });
+app.post("/login", passportLocalStrategy, (error, req, res, next) => {
+    if (error) return console.log(error.message);
+});
+
+// app.post('/login', passport.authenticate('local', { failureRedirect: '/login' }),
+//     function(req, res) {
+//         res.redirect('/des_user');
+//     });
 
 //search user
 app.get('/search', (req,res) => {
@@ -162,9 +164,11 @@ app.post('/search', (req, res, next) => {
 });
 
 //Unlock user section
-app.get('/des_user', (req, res) => {
+app.get('/des_user', async(req, res) => {
     // if (req.isAuthenticated()) {
-        return res.render('pages/unlock', { title: titleUnlock, status, alertColor, username: 'Jovanny' });
+        const results = await users.findAll();
+        res.json(results);
+        // return res.render('pages/unlock', { title: titleUnlock, status, alertColor, username: 'Jovanny' });
     // } else { return res.render('pages/login', { title: 'Iniciar sesion', status, alertColor }) }
 });
 

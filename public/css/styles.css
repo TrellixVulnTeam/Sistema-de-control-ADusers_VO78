@@ -104,7 +104,6 @@ form .btn {
 
 footer {
     position: relative;
-    bottom: 0;
     width: 100vw;
     z-index: -9999;
 } 
