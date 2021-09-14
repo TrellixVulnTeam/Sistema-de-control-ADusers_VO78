@@ -3,7 +3,6 @@ const express = require('express');
 const Shell = require('node-powershell')
 const bodyParser = require('body-parser');
 const fs = require('fs');
-const os = require('os');
 const { exec, execSync } = require('child_process');
 const psswdValiidator = require('password-validator'); //validate password
 const path = require('path');
@@ -14,6 +13,7 @@ const successActions = path.resolve('./logs/successActions.txt');
 const today = new Date();
 const psswd = today.toLocaleString('default', { month: 'long' }) + today.getFullYear();
 const passwd = psswd.charAt(0).toUpperCase() + psswd.slice(1);
+let historial = [];
 
 //passport control de login
 const passport = require('passport');
@@ -32,7 +32,7 @@ const titleSearch = 'Buscar Usuario';
 
 const PORT = 8000;
 const app = express();
-const {users} = require('./models')
+const { users } = require('./models')
 
 
 //control de mensajes al usuario
@@ -42,12 +42,13 @@ let alertColor;
 let alertColorAdd;
 let statusSearch= '';
 let alertColorSearch= '';
+let userInfo;
 
 //path de errores
 let pathNotFound = path.join(__dirname, "public", "404.html");
 
 app.use(passport.initialize()); //inicializar passport para poder utilizarlo
-app.use(passport.session()); ////para habilitar las sesiones con passport
+app.use(passport.session()); //para habilitar las sesiones con passport
 //create a schema object
 let schema = new psswdValiidator();
 //add schema propierties
@@ -126,6 +127,73 @@ const addUser = (user) => {
             })
     }
 
+//function search
+const search = async(user) => {
+    if(user.fullName){
+        exec(`Get-ADUser -Filte 'name -like "${user.fullName}*"'`, { 'shell': 'powershell.exe' }, (err, stdout, stderr) => {
+            if(stdout === ''){
+                return statusSearch = `Usuario ${user.fullName} no encontrado`, alertColorSearch = 'alert-danger'
+            }
+            console.log(stdout);
+            const array = [];
+            let employId;
+            let fullName;
+            let userResult;
+            let bool1 = false;
+            let bool2 = false;
+            const result = stdout.toString().split("\n")
+            const found = result.find(res =>{
+                if(res.indexOf('DistinguishedName') !== -1){
+                   fullName = res;
+                    bool1 = true; 
+                }
+               if(res.indexOf('SamAccountName') !== -1){
+                   employId = res;
+                   bool2 = true;
+               }
+               if(bool1 && bool2){
+                userResult = fullName + ' ' + employId;
+                array.push(userResult);
+                bool2 = false;
+                bool1 = false;
+               }
+            });
+            return historial = historial.concat(array);
+        });
+    }
+    if(user.employId){
+        exec(`Get-ADUser ${user.employId}`, { 'shell': 'powershell.exe' }, (err, stdout, stderr) => {
+            const array = [];
+            let employId;
+            let fullName;
+            let userResult;
+            const result = stdout.toString().split("\n")
+            const found = result.find(res =>{
+                if(res.indexOf('DistinguishedName') !== -1){
+                   fullName = res;
+                }
+               if(res.indexOf('SamAccountName') !== -1){
+                   employId = res;
+               }
+            });
+            userResult = fullName + ' ' + employId;
+            array.push(userResult);
+            return historial = historial.concat(array);
+        })
+    }
+}
+
+//Function to scroll the chatbox to the bottom.
+function scrollToBottom(){
+    let objDiv = new SimpleBar(document.getElementById('#simple'));
+    objDiv.SimpleBar.getScrollElement()
+
+    // These 2 lines of code did the trick when I didn't use Simplebar
+    //var objDiv = document.getElementById("simple");
+    objDiv.scrollTop = objDiv.scrollHeight;
+}
+
+
     //home section
 app.get('/', (req, res) => {
     return res.render('pages/login', { title: 'Iniciar sesion', status, alertColor });
@@ -148,31 +216,34 @@ app.post("/login", passportLocalStrategy, (error, req, res, next) => {
 
 //search user
 app.get('/search', (req,res) => {
-    return res.render('pages/search', {title: 'Buscar Usuario', statusSearch, alertColorSearch, username: 'Jovanny'})
+    return res.render('pages/search', {title: 'Buscar Usuario', statusSearch, alertColorSearch, username: 'Jovanny',historial})
 })
 
-app.post('/search', (req, res, next) => {
-    status = '';
-    alertColor = '';
-    let user = {fullName: req.body.fullname, employId: req.body.employId };
-    if(user.fullName === '' || user.employId ===''){
+app.post('/search', async(req, res, next) => {
+    historial = [];
+    let user = {fullName: req.body.fullname, employId: req.body.employid };
+    if(user.fullName === '' && user.employId ===''){
         statusSearch = 'Ingrese algun dato del Usuario (Nombre / Num.Empleado)';
         alertColorSearch = 'alert-warning';
         console.log('entro')
         return res.redirect('/search');
     }
+    await search(user);
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve(res.redirect('/search'));
+        }, 3000);
+    })
 });
 
 //Unlock user section
 app.get('/des_user', async(req, res) => {
-    // if (req.isAuthenticated()) {
-        const results = await users.findAll();
-        res.json(results);
-        // return res.render('pages/unlock', { title: titleUnlock, status, alertColor, username: 'Jovanny' });
-    // } else { return res.render('pages/login', { title: 'Iniciar sesion', status, alertColor }) }
+    //sif (req.isAuthenticated()) {
+        return res.render('pages/unlock', { title: titleUnlock, status, alertColor, username: 'Jovanny' });
+    //} else { return res.render('pages/login', { title: 'Iniciar sesion', status, alertColor }) }
 });
 
-app.post('/des_user', (req, res, next) => {
+app.post('/des_user', async(req, res, next) => {
     status = '';
     alertColor = '';
     let user = req.body.username;
@@ -189,7 +260,7 @@ app.post('/des_user', (req, res, next) => {
             if (password !== '') {
                 const pass = schema.validate(password);
                 if (pass) {
-                    UnlockUser(user, password);
+                   await UnlockUser(user, password);
                     return new Promise((resolve, reject) => {
                         setTimeout(() => {
                             resolve(res.redirect('/des_user'));
@@ -222,7 +293,6 @@ app.get('/re_user', (req, res) => {
     // if (req.isAuthenticated()) {
         return res.render('pages/register', { title: 'Registro de Usuario', statusAdd, alertColorAdd,username: 'Jovanny' });
     // } else { return res.render('pages/login', { title: 'Iniciar sesion', status, alertColor }) }
-
 });
 
 app.post('/re_user', async(req, res) => {

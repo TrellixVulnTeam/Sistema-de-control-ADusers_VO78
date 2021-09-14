@@ -79,6 +79,7 @@ form .btn {
     color:#14497b;
 }
 
+
 .lineas {
     position: relative;
     width: 40%;
@@ -104,6 +105,6 @@ form .btn {
 
 footer {
     position: relative;
-    width: 100vw;
+    
     z-index: -9999;
 } 
