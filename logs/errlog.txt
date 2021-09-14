@@ -1,1 +1,7 @@
-Fri Aug 20 2021 11:11:37 GMT-0700 (hora de verano del Pacífico) - El usuario: Z0101278 no se encontro en el directorio
+Mon Sep 13 2021 14:35:35 GMT-0700 (hora de verano del Pacífico) - New-ADUser : Directory object not found
+At line:1 char:1
++ New-ADUser -Name "JOVANNY FUENTES" -Enable $True -GivenName "JOVANNY" ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (CN=JOVANNY FUEN...,DC=ZGNE,DC=NET:String) [New-ADUser], ADIdentityNotFoundException
+    + FullyQualifiedErrorId : ActiveDirectoryCmdlet:Microsoft.ActiveDirectory.Management.ADIdentityNotFoundException,Microsoft.ActiveDirectory.Management.Commands.NewADUser
+ 

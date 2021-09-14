@@ -1,14 +1,15 @@
-<nav class="navbar-container">
-    <div class="container-fluid d-flex flex-row justify-content-between">
-        <div class='img-logo'>
-            <a class="navbar-brand fw-bold fs-6" href="/des_user">Sistema de Administracion de Usuarios</a>
-        </div>
-
-        <div class="d-flex flex-row container-list">
-            <li><i class="fas fa-user-alt"></i>
-                <a>
-                    <%=username %>
-                </a>
+<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm bg-body rounded ">
+    <div class="container-fluid d-flex justify-content-end">
+        <a class="navbar-brand" href="#">
+            <img src="img/logo.png" alt="" width="auto" height="60" class="d-inline-block align-text-top">
+        </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav col-12 justify-content-end">
+            <li class="nav-item">
+                <a class="nav-link" href="/search">Buscar Usuario</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/des_user">Desbloquear Usuario</a>
@@ -16,9 +17,15 @@
             <li class="nav-item">
                 <a class="nav-link" href="/re_user">Registrar Usuario</a>
             </li>
+            <%if(username) { %>
+                <li class="nav-item">
+                    <a class="nav-link" href="re_user"><i class="fas fa-user"></i> <%= username %></a>
+                </li>
+            <% } %>
             <li class="nav-item">
-                <a class="nav-link" href="/logout">Salir</a>
+                <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesion</a>
             </li>
-        </div>
+        </ul>
+      </div>
     </div>
 </nav>

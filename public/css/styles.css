@@ -30,7 +30,10 @@ form .btn {
     width:100%
 }
 
-
+.alert {
+    position: relative !important;
+    margin-bottom: 0;
+}
 
 .container-user {
     width: 100vw;
@@ -100,7 +103,8 @@ form .btn {
 }
 
 footer {
-    position: fixed;
+    position: relative;
     bottom: 0;
     width: 100vw;
+    z-index: -9999;
 } 

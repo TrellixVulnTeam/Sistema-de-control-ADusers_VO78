@@ -18,6 +18,7 @@ const passwd = psswd.charAt(0).toUpperCase() + psswd.slice(1);
 //passport control de login
 const passport = require('passport');
 const session = require('express-session');
+const { render } = require('ejs');
 require('./config/passport');
 
 const passportLocalStrategy = passport.authenticate("local", {
@@ -27,6 +28,7 @@ const passportLocalStrategy = passport.authenticate("local", {
 
 const titleUnlock = 'Desbloquear Usuario';
 const titleAdd = 'Añadir un usuario de Dominio';
+const titleSearch = 'Buscar Usuario';
 
 const PORT = 8000;
 const app = express();
@@ -37,6 +39,8 @@ let status;
 let statusAdd;
 let alertColor;
 let alertColorAdd;
+let statusSearch= '';
+let alertColorSearch= '';
 
 //path de errores
 let pathNotFound = path.join(__dirname, "public", "404.html");
@@ -101,48 +105,67 @@ const UnlockUser = (user, password) => {
 
 //Function to ADuser
 const addUser = (user) => {
-        user.firstName = user.lastName.toUpperCase();
+        user.firstName = user.firstName.toUpperCase();
         user.lastName = user.lastName.toUpperCase();
         user.employId = user.employId.toUpperCase();
         user.location = user.location.toUpperCase();
 
         const fullName = (user.firstName + ' ' + user.lastName);
-        exec(`New-ADUser -Name "${fullName}" -Enable $True -GivenName "${user.firstName}" -SamAccountName "${user.employId}" -Surname "${user.lastName}" -UserPrincipalName "${user.employId}@ZGNE.NET" -LogonWorkstations "${user.employId}" -AccountPassword $(ConvertTo-SecureString '${user.password}' -AsPlainText -Force) -PasswordNeverExpires $true`, { 'shell': 'powershell.exe' }, (err, stdout, stderr) => {
-            if (err) {
-                console.log(stderr);
-                fs.writeFile(pathErrLog, `${today} - ${stderr}`, (err) => { if (err) { console.log(err.message) } });
-                return statusAdd = `Error en registro de usuario: ${fullName}, verifique los datos`, alertColorAdd = 'alert-danger';
-            } else {
-                console.log(stdout);
-                fs.writeFile(successActions, `${today} - El usuario ${user.employId} ah sido de alta`, (err) => { if (err) { console.log(err.message) } });
-                return statusAdd = `Usuario ${fullName} Registrado`, alertColorAdd = 'alert-success'
-            }
-        })
+
+            exec(`New-ADUser -Name "${fullName}" -Enable $True -GivenName "${user.firstName}" -SamAccountName "${user.employId}" -Path "OU=Usuarios,OU=${user.location},DC=ZGNE,DC=NET" -Surname "${user.lastName}" -UserPrincipalName "${user.employId}@ZGNE.NET" -AccountPassword $(ConvertTo-SecureString '${user.password}' -AsPlainText -Force) -PasswordNeverExpires $true`, { 'shell': 'powershell.exe' }, (err, stdout, stderr) => {
+                if (err) {
+                    console.log(stderr);
+                    fs.writeFile(pathErrLog, `${today} - ${stderr}`, (err) => { if (err) { console.log(err.message) } });
+                    return statusAdd = `Error en registro de usuario: ${fullName}, verifique los datos`, alertColorAdd = 'alert-danger';
+                } else {
+                    console.log(stdout);
+                    fs.writeFile(successActions, `${today} - El usuario ${user.employId} ah sido de alta`, (err) => { if (err) { console.log(err.message) } });
+                    return statusAdd = `Usuario ${user.employId} Registrado`, alertColorAdd = 'alert-success'
+                }
+            })
     }
+
     //home section
 app.get('/', (req, res) => {
     return res.render('pages/login', { title: 'Iniciar sesion', status, alertColor });
 });
 
+
 //login section
 app.get('/login', (req, res) => {
     return res.render('pages/login', { title: 'Iniciar sesion', status, alertColor });
 });
-
-app.post("/login", passportLocalStrategy, (error, req, res, next) => {
-    if (error) return console.log(error.message);
-});
+// app.post("/login", passportLocalStrategy, (error, req, res, next) => {
+//     if (error) return console.log(error.message);
+// });
 
 app.post('/login', passport.authenticate('local', { failureRedirect: '/login' }),
     function(req, res) {
         res.redirect('/des_user');
     });
 
+//search user
+app.get('/search', (req,res) => {
+    return res.render('pages/search', {title: 'Buscar Usuario', statusSearch, alertColorSearch, username: 'Jovanny'})
+})
+
+app.post('/search', (req, res, next) => {
+    status = '';
+    alertColor = '';
+    let user = {fullName: req.body.fullname, employId: req.body.employId };
+    if(user.fullName === '' || user.employId ===''){
+        statusSearch = 'Ingrese algun dato del Usuario (Nombre / Num.Empleado)';
+        alertColorSearch = 'alert-warning';
+        console.log('entro')
+        return res.redirect('/search');
+    }
+});
+
 //Unlock user section
 app.get('/des_user', (req, res) => {
-    if (req.isAuthenticated()) {
-        return res.render('pages/unlock', { title: titleUnlock, status, alertColor, username: '' });
-    } else { return res.render('pages/login', { title: 'Iniciar sesion', status, alertColor }) }
+    // if (req.isAuthenticated()) {
+        return res.render('pages/unlock', { title: titleUnlock, status, alertColor, username: 'Jovanny' });
+    // } else { return res.render('pages/login', { title: 'Iniciar sesion', status, alertColor }) }
 });
 
 app.post('/des_user', (req, res, next) => {
@@ -192,9 +215,9 @@ app.post('/des_user', (req, res, next) => {
 
 //Register an User section
 app.get('/re_user', (req, res) => {
-    if (req.isAuthenticated()) {
-        return res.render('pages/register', { title: 'Registro de Usuario', statusAdd, alertColorAdd });
-    } else { return res.render('pages/login', { title: 'Iniciar sesion', status, alertColor }) }
+    // if (req.isAuthenticated()) {
+        return res.render('pages/register', { title: 'Registro de Usuario', statusAdd, alertColorAdd,username: 'Jovanny' });
+    // } else { return res.render('pages/login', { title: 'Iniciar sesion', status, alertColor }) }
 
 });
 
@@ -203,6 +226,7 @@ app.post('/re_user', async(req, res) => {
     alertColorAdd = '';
     try {
         let user = { employId: req.body.employid, firstName: req.body.firstName, lastName: req.body.lastName, password: req.body.password, rePassword: req.body.rePassword, location: req.body.location }
+        if(user.location ==='Selecione Locacion...'){return statusAdd = 'Selececcione la locacion del usuario', alertColorAdd = 'alert-warning', res.redirect('re_user')};
         if (user.password === user.rePassword || (user.password === '' && user.rePassword === '')) {
             if (user.password !== '') {
                 const pass = schema.validate(user.password);
@@ -226,7 +250,6 @@ app.post('/re_user', async(req, res) => {
                     setTimeout(() => {
                         resolve(res.redirect('/re_user'));
                     }, 3000);
-
                 });
             }
         }
@@ -244,19 +267,15 @@ app.get("/logout", (req, res) => {
     res.redirect("/login");
 })
 
-//Middleware para el manejo de errores
+// Middleware para el manejo de errores
 app.use((err, req, res, next) => {
-    const errors = require("./utils/errorMessages");
-    response.status(404).sendFile(pathNotFound);
-    if (error) {
-        response.redirect("/login");
-        alert(error.message);
+    res.status(404).sendFile('./public/404.html');
+    if (err) {
+        res.redirect("/login");
+        alert(err.message);
     }
 });
 
-app.use((request, response) => {
-    response.status(404).sendFile(pathNotFound);
-});
 
 
 
